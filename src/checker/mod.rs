@@ -139,17 +139,21 @@ impl SpellChecker {
             // Get top suggestion
             let suggestions = suggestions::generate(&word_lower, &self.dictionary, 1);
             if let Some(top_suggestion) = suggestions.first() {
-                replacements.push((span.text.clone(), top_suggestion.clone()));
+                // Store the start and end offsets and the replacement word
+                replacements.push((span.start, span.end, top_suggestion.clone()));
             }
         }
 
-        // Apply replacements
+        // Apply replacements at specific positions (from end to start)
         let mut new_content = content.clone();
         let mut fixed_count = 0;
 
-        for (old_word, new_word) in &replacements {
-            if new_content.contains(old_word) {
-                new_content = new_content.replacen(old_word, new_word, 1);
+        // Sort by start offset in reverse order to avoid shifting positions
+        replacements.sort_by(|a, b| b.0.cmp(&a.0));
+        for (start, end, new_word) in &replacements {
+            // Defensive: check bounds
+            if *start <= *end && *end <= new_content.len() {
+                new_content.replace_range(*start..*end, new_word);
                 fixed_count += 1;
             }
         }
