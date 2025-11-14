@@ -55,11 +55,11 @@ pub fn generate(word: &str, dictionary: &Dictionary, max_suggestions: usize) -> 
         }
     }
 
-    // 4. Only do expensive full-dictionary search for very short words
-    // or as a last resort with strict limits
-    if suggestions.len() < max_suggestions && word.len() <= 5 {
-        // For short words only, do a limited full-dictionary scan
-        // This is expensive but acceptable for short words in small dictionaries
+    // 4. Only do expensive full-dictionary search for very short words (≤3 chars)
+    // This is a last resort and only acceptable for words like "is", "an", "to", etc.
+    // Most misspellings are longer, so this rarely executes in practice
+    if suggestions.len() < max_suggestions && word.len() <= 3 {
+        // For very short words only, do a limited full-dictionary scan
         let all_words = dictionary.all_words();
         let mut candidates: Vec<_> = all_words
             .into_iter()

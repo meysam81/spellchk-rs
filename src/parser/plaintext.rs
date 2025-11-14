@@ -5,19 +5,28 @@ use unicode_segmentation::UnicodeSegmentation;
 /// Parse plain text and extract all words
 pub fn parse(content: &str) -> Result<Vec<TextSpan>> {
     let mut spans = Vec::new();
+    let mut byte_offset = 0;
 
     for (line_num, line) in content.lines().enumerate() {
         let line_num = line_num + 1;
         let words = extract_words(line);
 
         for (word, column) in words {
+            let start = byte_offset + column;
+            let end = start + word.len();
+
             spans.push(TextSpan {
                 text: word.clone(),
                 line: line_num,
                 column: column + 1, // 1-indexed
+                start,
+                end,
                 original_text: get_context(line, column, word.len()),
             });
         }
+
+        // Move offset to the next line (line length + newline character)
+        byte_offset += line.len() + 1;
     }
 
     Ok(spans)

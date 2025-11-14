@@ -31,6 +31,8 @@ pub fn parse(content: &str) -> Result<Vec<TextSpan>> {
                         text: word.clone(),
                         line: current_line,
                         column: current_column + offset,
+                        start: 0,  // TODO: Calculate accurate byte offsets for markdown
+                        end: 0,    // For now, fix mode works better with plain text
                         original_text: get_context(&text, offset, word.len()),
                     });
                 }

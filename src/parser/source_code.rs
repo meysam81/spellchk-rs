@@ -33,6 +33,8 @@ fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
                     text: word.clone(),
                     line: line_num,
                     column: idx + 2 + offset,
+                    start: 0,  // TODO: Calculate byte offsets for source code
+                    end: 0,
                     original_text: comment.to_string(),
                 });
             }
@@ -65,6 +67,8 @@ fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
                         text: word.clone(),
                         line: line_num,
                         column: start_idx + 1,
+                        start: 0,  // TODO: Calculate byte offsets for source code
+                        end: 0,
                         original_text: content.clone(),
                     });
                 }
@@ -98,6 +102,8 @@ fn parse_python_style(content: &str) -> Result<Vec<TextSpan>> {
                         text: word.clone(),
                         line: line_num,
                         column: idx + 1 + offset,
+                        start: 0,  // TODO: Calculate byte offsets for source code
+                        end: 0,
                         original_text: comment.to_string(),
                     });
                 }
@@ -114,6 +120,8 @@ fn parse_python_style(content: &str) -> Result<Vec<TextSpan>> {
                         text: word.clone(),
                         line: line_num,
                         column: string_content.start(),
+                        start: 0,  // TODO: Calculate byte offsets for source code
+                        end: 0,
                         original_text: content.to_string(),
                     });
                 }
