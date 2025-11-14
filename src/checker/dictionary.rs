@@ -18,8 +18,13 @@ impl Dictionary {
             return Self::create_embedded(language);
         }
 
-        let file = File::open(&dict_path)
-            .with_context(|| format!("Failed to open dictionary: {}", dict_path.display()))?;
+        Self::load_from_path(&dict_path)
+    }
+
+    /// Load dictionary from a specific path (useful for testing)
+    pub fn load_from_path(path: &Path) -> Result<Self> {
+        let file = File::open(path)
+            .with_context(|| format!("Failed to open dictionary: {}", path.display()))?;
 
         let reader = BufReader::new(file);
         let set = Set::new(reader.bytes().collect::<Result<Vec<_>, _>>()?)
@@ -48,6 +53,10 @@ impl Dictionary {
     }
 
     /// Get all words in dictionary (for building suggestions)
+    ///
+    /// WARNING: This is an expensive operation that loads the entire dictionary
+    /// into memory. Use sparingly and consider caching the result if called multiple times.
+    /// Prefer using `words_with_prefix()` or direct `contains()` checks when possible.
     pub fn all_words(&self) -> Vec<String> {
         let mut words = Vec::new();
         let mut stream = self.set.stream();
@@ -152,7 +161,8 @@ mod tests {
 
         Dictionary::build_from_words(&words, &dict_path).unwrap();
 
-        let dict = Dictionary::load("test").unwrap();
+        // Load from the specific path we just created
+        let dict = Dictionary::load_from_path(&dict_path).unwrap();
         assert!(dict.contains("hello"));
         assert!(dict.contains("world"));
         assert!(!dict.contains("notfound"));

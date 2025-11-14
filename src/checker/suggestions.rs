@@ -36,28 +36,55 @@ pub fn generate(word: &str, dictionary: &Dictionary, max_suggestions: usize) -> 
         }
     }
 
-    // 3. If still need more, do a broader search (slower)
-    if suggestions.len() < max_suggestions {
-        // Search for words with similar length
+    // 3. Try different prefix lengths (medium speed)
+    if suggestions.len() < max_suggestions && word.len() >= 2 {
+        // Try 2-character prefix for shorter words
+        let prefix = &word[..2];
+        let mut prefix_matches = dictionary.words_with_prefix(prefix);
+        prefix_matches.sort_by_key(|w| edit_distance(word, w));
+
+        for candidate in prefix_matches {
+            let distance = edit_distance(word, &candidate);
+            if distance <= 3 && !suggestions.contains(&candidate) {
+                suggestions.push(candidate);
+                if suggestions.len() >= max_suggestions {
+                    suggestions.truncate(max_suggestions);
+                    return suggestions;
+                }
+            }
+        }
+    }
+
+    // 4. Only do expensive full-dictionary search for very short words
+    // or as a last resort with strict limits
+    if suggestions.len() < max_suggestions && word.len() <= 5 {
+        // For short words only, do a limited full-dictionary scan
+        // This is expensive but acceptable for short words in small dictionaries
         let all_words = dictionary.all_words();
         let mut candidates: Vec<_> = all_words
             .into_iter()
             .filter(|w| {
+                // Pre-filter by length to reduce edit distance calculations
                 let len_diff = (w.len() as i32 - word.len() as i32).abs();
-                len_diff <= 2
+                len_diff <= 1
             })
-            .map(|w| (edit_distance(word, &w), w))
-            .filter(|(dist, _)| *dist <= 3)
+            .take(100) // Limit candidates to first 100 matching length criteria
+            .filter_map(|w| {
+                let dist = edit_distance(word, &w);
+                if dist <= 2 && !suggestions.contains(&w) {
+                    Some((dist, w))
+                } else {
+                    None
+                }
+            })
             .collect();
 
         candidates.sort_by_key(|(dist, _)| *dist);
 
         for (_, candidate) in candidates {
-            if !suggestions.contains(&candidate) {
-                suggestions.push(candidate);
-                if suggestions.len() >= max_suggestions {
-                    break;
-                }
+            suggestions.push(candidate);
+            if suggestions.len() >= max_suggestions {
+                break;
             }
         }
     }
