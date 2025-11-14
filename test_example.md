@@ -19,6 +19,6 @@ fn main() {
 
 And some `inline_code_here` that should also be ignored.
 
-But regular text like "receive" and "occured" should be caught.
+But regular text like "receive" and "occurred" should be caught.
 
 The URL https://example.com/somethng should mostly be ignored.
