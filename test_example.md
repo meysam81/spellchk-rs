@@ -21,4 +21,4 @@ And some `inline_code_here` that should also be ignored.
 
 But regular text like "receive" and "occurred" should be caught.
 
-The URL https://example.com/somethng should mostly be ignored.
+The URL https://example.com/something should mostly be ignored.
