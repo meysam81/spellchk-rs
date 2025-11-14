@@ -38,17 +38,34 @@ fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
             }
         }
 
-        // Extract from strings (basic approach - doesn't handle all edge cases)
-        for cap in STRING_LITERAL.captures_iter(line) {
-            if let Some(string_content) = cap.get(1).or_else(|| cap.get(3)) {
-                let content = string_content.as_str();
-                let words = extract_words(content);
+        // Extract from strings (improved: handles escaped quotes)
+        let mut chars = line.char_indices().peekable();
+        while let Some((start_idx, ch)) = chars.next() {
+            if ch == '"' || ch == '\'' {
+                let quote = ch;
+                let mut content = String::new();
+                let mut escaped = false;
+                let mut end_idx = start_idx + 1;
+                while let Some((i, c)) = chars.next() {
+                    end_idx = i + c.len_utf8();
+                    if escaped {
+                        content.push(c);
+                        escaped = false;
+                    } else if c == '\\' {
+                        escaped = true;
+                    } else if c == quote {
+                        break;
+                    } else {
+                        content.push(c);
+                    }
+                }
+                let words = extract_words(&content);
                 for (word, _) in words {
                     spans.push(TextSpan {
                         text: word.clone(),
                         line: line_num,
-                        column: string_content.start(),
-                        original_text: content.to_string(),
+                        column: start_idx + 1,
+                        original_text: content.clone(),
                     });
                 }
             }

@@ -216,18 +216,22 @@ impl SpellChecker {
                     words_to_add.push(word_lower);
                 } else {
                     // User chose a replacement
-                    replacements.push((span.text.clone(), choice));
+                    // Store (start, end, replacement)
+                    replacements.push((span.start, span.end, choice));
                 }
             }
         }
 
-        // Apply replacements
+        // Apply replacements using byte offsets to avoid replacing wrong occurrences
         let mut new_content = content.clone();
         let mut fixed_count = 0;
 
-        for (old_word, new_word) in &replacements {
-            if new_content.contains(old_word) {
-                new_content = new_content.replacen(old_word, new_word, 1);
+        // Sort replacements by start offset in descending order
+        replacements.sort_by(|a, b| b.0.cmp(&a.0));
+        for (start, end, new_word) in &replacements {
+            // Defensive: check bounds
+            if *start <= *end && *end <= new_content.len() {
+                new_content.replace_range(*start..*end, new_word);
                 fixed_count += 1;
             }
         }

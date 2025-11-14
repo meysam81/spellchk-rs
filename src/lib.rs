@@ -23,6 +23,11 @@ pub struct SpellError {
     pub suggestions: Vec<String>,
 }
 
+#[derive(Debug, Clone)]
+pub struct TextSpan {
+    pub start: usize,
+    pub end: usize,
+}
 impl Default for CheckResult {
     fn default() -> Self {
         Self {

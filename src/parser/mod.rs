@@ -59,6 +59,8 @@ pub struct TextSpan {
     pub line: usize,
     pub column: usize,
     pub original_text: String, // For context
+    pub start: usize, // Byte offset where the span starts
+    pub end: usize,   // Byte offset where the span ends
 }
 
 /// Parse a file and extract checkable text spans
