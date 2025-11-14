@@ -1,4 +1,5 @@
 use crate::parser::TextSpan;
+use crate::checker::tokenizer::split_compound_word;
 use anyhow::Result;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -73,38 +74,6 @@ fn extract_words(text: &str) -> Vec<(String, usize)> {
     }
 
     words
-}
-
-/// Split camelCase and snake_case into individual words
-fn split_compound_word(word: &str) -> Vec<String> {
-    let mut result = Vec::new();
-    let mut current = String::new();
-
-    for ch in word.chars() {
-        if ch == '_' || ch == '-' {
-            if !current.is_empty() {
-                result.push(current.clone());
-                current.clear();
-            }
-        } else if ch.is_uppercase() && !current.is_empty() {
-            result.push(current.clone());
-            current.clear();
-            current.push(ch.to_lowercase().next().unwrap());
-        } else {
-            current.push(ch);
-        }
-    }
-
-    if !current.is_empty() {
-        result.push(current);
-    }
-
-    // If no splitting occurred, return original word
-    if result.is_empty() {
-        vec![word.to_string()]
-    } else {
-        result
-    }
 }
 
 fn get_context(line: &str, offset: usize, word_len: usize) -> String {

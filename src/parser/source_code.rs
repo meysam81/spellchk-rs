@@ -20,6 +20,7 @@ pub fn parse(content: &str, lang: SourceLang) -> Result<Vec<TextSpan>> {
 
 fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
     let mut spans = Vec::new();
+    let mut byte_offset = 0;
 
     for (line_num, line) in content.lines().enumerate() {
         let line_num = line_num + 1;
@@ -28,13 +29,18 @@ fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
         if let Some(idx) = line.find("//") {
             let comment = &line[idx + 2..];
             let words = extract_words(comment);
+            let comment_start = byte_offset + idx + 2;
+
             for (word, offset) in words {
+                let start = comment_start + offset;
+                let end = start + word.len();
+
                 spans.push(TextSpan {
                     text: word.clone(),
                     line: line_num,
                     column: idx + 2 + offset,
-                    start: 0,  // TODO: Calculate byte offsets for source code
-                    end: 0,
+                    start,
+                    end,
                     original_text: comment.to_string(),
                 });
             }
@@ -63,17 +69,25 @@ fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
                 }
                 let words = extract_words(&content);
                 for (word, _) in words {
+                    // For strings, we have approximate byte offsets
+                    // Exact calculation would require tracking within the string content
+                    let start = byte_offset + start_idx + 1;
+                    let end = start + word.len();
+
                     spans.push(TextSpan {
                         text: word.clone(),
                         line: line_num,
                         column: start_idx + 1,
-                        start: 0,  // TODO: Calculate byte offsets for source code
-                        end: 0,
+                        start,
+                        end,
                         original_text: content.clone(),
                     });
                 }
             }
         }
+
+        // Move to next line (line bytes + newline)
+        byte_offset += line.len() + 1;
     }
 
     // TODO: Handle multi-line block comments /* ... */
@@ -84,6 +98,7 @@ fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
 
 fn parse_python_style(content: &str) -> Result<Vec<TextSpan>> {
     let mut spans = Vec::new();
+    let mut byte_offset = 0;
 
     for (line_num, line) in content.lines().enumerate() {
         let line_num = line_num + 1;
@@ -97,13 +112,18 @@ fn parse_python_style(content: &str) -> Result<Vec<TextSpan>> {
             if quote_count % 2 == 0 {
                 let comment = &line[idx + 1..];
                 let words = extract_words(comment);
+                let comment_start = byte_offset + idx + 1;
+
                 for (word, offset) in words {
+                    let start = comment_start + offset;
+                    let end = start + word.len();
+
                     spans.push(TextSpan {
                         text: word.clone(),
                         line: line_num,
                         column: idx + 1 + offset,
-                        start: 0,  // TODO: Calculate byte offsets for source code
-                        end: 0,
+                        start,
+                        end,
                         original_text: comment.to_string(),
                     });
                 }
@@ -115,18 +135,27 @@ fn parse_python_style(content: &str) -> Result<Vec<TextSpan>> {
             if let Some(string_content) = cap.get(1).or_else(|| cap.get(3)) {
                 let content = string_content.as_str();
                 let words = extract_words(content);
+                let string_start = byte_offset + string_content.start();
+
                 for (word, _) in words {
+                    // Approximate byte offset within string
+                    let start = string_start + 1; // +1 for opening quote
+                    let end = start + word.len();
+
                     spans.push(TextSpan {
                         text: word.clone(),
                         line: line_num,
                         column: string_content.start(),
-                        start: 0,  // TODO: Calculate byte offsets for source code
-                        end: 0,
+                        start,
+                        end,
                         original_text: content.to_string(),
                     });
                 }
             }
         }
+
+        // Move to next line (line bytes + newline)
+        byte_offset += line.len() + 1;
     }
 
     Ok(spans)

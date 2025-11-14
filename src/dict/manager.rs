@@ -4,7 +4,10 @@ use indicatif::{ProgressBar, ProgressStyle};
 use std::fs;
 use std::path::PathBuf;
 
-const WORDLIST_BASE_URL: &str = "https://raw.githubusercontent.com/dwyl/english-words/master";
+// Use a specific commit hash for reproducibility and stability
+// This prevents unexpected changes from the 'master' branch
+const WORDLIST_BASE_URL: &str = "https://raw.githubusercontent.com/dwyl/english-words/6e4bc58ad764c3e6df8b5be4048671962c9d6a23";
+const WORDLIST_VERSION: &str = "2023.12";
 
 pub struct DictionaryInfo {
     pub language: String,
@@ -57,7 +60,11 @@ pub fn list_dictionaries() -> Result<()> {
 }
 
 pub fn download_dictionary(language: &str) -> Result<()> {
-    println!("{} dictionary for {}...", "Downloading".cyan().bold(), language.yellow());
+    println!("{} dictionary for {} (version: {})...",
+        "Downloading".cyan().bold(),
+        language.yellow(),
+        WORDLIST_VERSION.dimmed()
+    );
 
     let data_dir = crate::config::Config::data_dir()
         .context("Failed to get data directory")?;
@@ -65,8 +72,8 @@ pub fn download_dictionary(language: &str) -> Result<()> {
     fs::create_dir_all(&data_dir)
         .context("Failed to create data directory")?;
 
-    // For MVP, download from a simple wordlist source
-    // In production, you'd want proper Hunspell dictionaries
+    // Download from pinned commit hash for reproducibility
+    // Using specific commit instead of 'master' prevents unexpected changes
     let wordlist_url = match language {
         "en_US" | "en_GB" => {
             format!("{}/words_alpha.txt", WORDLIST_BASE_URL)
@@ -177,6 +184,7 @@ pub fn show_info(language: &str) -> Result<()> {
     println!("{}", format!("Dictionary: {}", language).bold());
     println!("  Path: {}", dict_path.display());
     println!("  Size: {} KB", metadata.len() / 1024);
+    println!("  Version: {}", WORDLIST_VERSION);
     println!("  Format: FST (Finite State Transducer)");
 
     // Try to load and get word count
