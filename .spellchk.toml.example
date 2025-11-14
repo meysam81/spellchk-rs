@@ -1,0 +1,33 @@
+# Example spellchk configuration file
+# Copy this to .spellchk.toml (project) or ~/.config/spellchk/config.toml (global)
+
+# Language/dictionary to use
+language = "en_US"  # Options: en_US, en_GB, etc.
+
+# Path to personal dictionary file
+# Words in this file will never be marked as misspelled
+personal_dictionary = "~/.config/spellchk/personal.txt"
+
+# Maximum number of suggestions to show per misspelling
+max_suggestions = 5
+
+# Case-sensitive checking (default: false)
+case_sensitive = false
+
+# Regular expression patterns to ignore
+# Words matching these patterns will not be checked
+ignore_patterns = [
+    "\\b[A-Z0-9_]{2,}\\b",                  # ALL_CAPS constants (e.g., MAX_VALUE, HTTP_OK)
+    "https?://\\S+",                         # URLs
+    "\\b[a-fA-F0-9]{32,}\\b",               # Hex hashes (MD5, SHA, etc.)
+    "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",  # Email addresses
+    "TODO|FIXME|XXX|HACK",                   # Code annotations
+    "\\bv\\d+\\.\\d+(\\.\\d+)?\\b",         # Version numbers (v1.0, v2.1.3)
+    "\\b[A-Z][a-z]+[A-Z][a-zA-Z]*\\b",      # CamelCase identifiers
+]
+
+# Checking rules to enable
+enabled_rules = [
+    "check-compound",     # Check compound words
+    "check-rare",         # Check rare/unusual words
+]
