@@ -68,8 +68,14 @@ pub fn download_dictionary(language: &str) -> Result<()> {
     // For MVP, download from a simple wordlist source
     // In production, you'd want proper Hunspell dictionaries
     let wordlist_url = match language {
-        "en_US" | "en_GB" | _ => {
+        "en_US" | "en_GB" => {
             format!("{}/words_alpha.txt", WORDLIST_BASE_URL)
+        }
+        other => {
+            anyhow::bail!(
+                "Language '{}' is not supported. Only 'en_US' and 'en_GB' are currently available.",
+                other
+            );
         }
     };
 
