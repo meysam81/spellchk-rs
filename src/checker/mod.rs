@@ -230,7 +230,7 @@ impl SpellChecker {
         replacements.sort_by(|a, b| b.0.cmp(&a.0));
         for (start, end, new_word) in &replacements {
             // Defensive: check bounds
-            if *start <= *end && *end <= new_content.len() {
+            if *start < *end && *end <= new_content.len() {
                 new_content.replace_range(*start..*end, new_word);
                 fixed_count += 1;
             }
