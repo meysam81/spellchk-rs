@@ -1,6 +1,6 @@
 # Test Document
 
-This is a test document with some mispellings.
+This is a test document with some misspellings.
 
 ## Features
 
