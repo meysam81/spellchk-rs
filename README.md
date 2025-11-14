@@ -320,7 +320,7 @@ at your option.
 
 ## Acknowledgments
 
-- Dictionary data from [SCOWL](http://wordlist.aspnet/) and [dwyl/english-words](https://github.com/dwyl/english-words)
+- Dictionary data from [SCOWL](http://wordlist.aspell.net/) and [dwyl/english-words](https://github.com/dwyl/english-words)
 - Inspired by tools like `aspell`, `hunspell`, and `codespell`
 - Built with amazing Rust crates: `clap`, `fst`, `rayon`, `pulldown-cmark`
 

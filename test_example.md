@@ -1,24 +1,24 @@
 # Test Document
 
-This is a test documnt with some mispellings.
+This is a test document with some mispellings.
 
 ## Features
 
-- Spellchekcing is important
-- We shuold check all files
-- Grammer matters too
+- Spellchecking is important
+- We should check all files
+- Grammar matters too
 
 Here is a code block that should be ignored:
 
 ```rust
 fn main() {
-    let mispeled = "this should not be checked";
-    println!("{}", mispeled);
+    let misspelled = "this should not be checked";
+    println!("{}", misspelled);
 }
 ```
 
 And some `inline_code_here` that should also be ignored.
 
-But regular text like "recieve" and "occured" should be caught.
+But regular text like "receive" and "occured" should be caught.
 
 The URL https://example.com/somethng should mostly be ignored.

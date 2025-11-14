@@ -176,7 +176,7 @@ pub fn show_info(language: &str) -> Result<()> {
     // Try to load and get word count
     match crate::checker::dictionary::Dictionary::load(language) {
         Ok(dict) => {
-            let word_count = dict.all_words().len();
+            let word_count = dict.word_count();
             println!("  Words: {}", word_count.to_string().yellow());
         }
         Err(e) => {
