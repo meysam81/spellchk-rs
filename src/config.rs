@@ -30,15 +30,12 @@ impl Default for Config {
             language: "en_US".to_string(),
             personal_dictionary: None,
             ignore_patterns: vec![
-                r"\b[A-Z0-9_]{2,}\b".to_string(),        // ALL_CAPS
-                r"https?://\S+".to_string(),              // URLs
-                r"\b[a-fA-F0-9]{32,}\b".to_string(),     // Hashes
+                r"\b[A-Z0-9_]{2,}\b".to_string(),    // ALL_CAPS
+                r"https?://\S+".to_string(),         // URLs
+                r"\b[a-fA-F0-9]{32,}\b".to_string(), // Hashes
                 r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}".to_string(), // Emails
             ],
-            enabled_rules: vec![
-                "check-compound".to_string(),
-                "check-rare".to_string(),
-            ],
+            enabled_rules: vec!["check-compound".to_string(), "check-rare".to_string()],
             max_suggestions: 5,
             case_sensitive: false,
         }
@@ -90,8 +87,7 @@ impl Config {
                     .context("Failed to create personal dictionary directory")?;
             }
             if !path.exists() {
-                fs::write(path, "")
-                    .context("Failed to create personal dictionary file")?;
+                fs::write(path, "").context("Failed to create personal dictionary file")?;
             }
         }
 
@@ -127,23 +123,19 @@ impl Config {
     }
 
     pub fn global_config_path() -> Option<PathBuf> {
-        ProjectDirs::from("", "", "spellchk")
-            .map(|dirs| dirs.config_dir().join("config.toml"))
+        ProjectDirs::from("", "", "spellchk").map(|dirs| dirs.config_dir().join("config.toml"))
     }
 
     pub fn default_personal_dict_path() -> Option<PathBuf> {
-        ProjectDirs::from("", "", "spellchk")
-            .map(|dirs| dirs.config_dir().join("personal.txt"))
+        ProjectDirs::from("", "", "spellchk").map(|dirs| dirs.config_dir().join("personal.txt"))
     }
 
     pub fn cache_dir() -> Option<PathBuf> {
-        ProjectDirs::from("", "", "spellchk")
-            .map(|dirs| dirs.cache_dir().to_path_buf())
+        ProjectDirs::from("", "", "spellchk").map(|dirs| dirs.cache_dir().to_path_buf())
     }
 
     pub fn data_dir() -> Option<PathBuf> {
-        ProjectDirs::from("", "", "spellchk")
-            .map(|dirs| dirs.data_dir().to_path_buf())
+        ProjectDirs::from("", "", "spellchk").map(|dirs| dirs.data_dir().to_path_buf())
     }
 }
 

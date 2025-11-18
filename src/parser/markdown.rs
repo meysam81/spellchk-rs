@@ -31,8 +31,8 @@ pub fn parse(content: &str) -> Result<Vec<TextSpan>> {
                         text: word.clone(),
                         line: current_line,
                         column: current_column + offset,
-                        start: 0,  // TODO: Calculate accurate byte offsets for markdown
-                        end: 0,    // For now, fix mode works better with plain text
+                        start: 0, // TODO: Calculate accurate byte offsets for markdown
+                        end: 0,   // For now, fix mode works better with plain text
                         original_text: get_context(&text, offset, word.len()),
                     });
                 }
@@ -68,12 +68,10 @@ fn extract_words(text: &str) -> Vec<(String, usize)> {
                 in_word = true;
             }
             current_word.push(ch);
-        } else {
-            if in_word && !current_word.is_empty() {
-                words.push((current_word.clone(), word_start));
-                current_word.clear();
-                in_word = false;
-            }
+        } else if in_word && !current_word.is_empty() {
+            words.push((current_word.clone(), word_start));
+            current_word.clear();
+            in_word = false;
         }
     }
 

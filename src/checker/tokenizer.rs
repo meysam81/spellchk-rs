@@ -37,17 +37,8 @@ mod tests {
 
     #[test]
     fn test_compound_splitting() {
-        assert_eq!(
-            split_compound_word("camelCase"),
-            vec!["camel", "case"]
-        );
-        assert_eq!(
-            split_compound_word("snake_case"),
-            vec!["snake", "case"]
-        );
-        assert_eq!(
-            split_compound_word("kebab-case"),
-            vec!["kebab", "case"]
-        );
+        assert_eq!(split_compound_word("camelCase"), vec!["camel", "case"]);
+        assert_eq!(split_compound_word("snake_case"), vec!["snake", "case"]);
+        assert_eq!(split_compound_word("kebab-case"), vec!["kebab", "case"]);
     }
 }

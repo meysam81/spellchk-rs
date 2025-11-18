@@ -1,7 +1,7 @@
 use crate::parser::{SourceLang, TextSpan};
 use anyhow::Result;
-use regex::Regex;
 use lazy_static::lazy_static;
+use regex::Regex;
 
 lazy_static! {
     // Regex patterns for different comment styles
@@ -53,9 +53,7 @@ fn parse_c_style(content: &str) -> Result<Vec<TextSpan>> {
                 let quote = ch;
                 let mut content = String::new();
                 let mut escaped = false;
-                let mut end_idx = start_idx + 1;
-                while let Some((i, c)) = chars.next() {
-                    end_idx = i + c.len_utf8();
+                for (_i, c) in chars.by_ref() {
                     if escaped {
                         content.push(c);
                         escaped = false;
@@ -174,15 +172,13 @@ fn extract_words(text: &str) -> Vec<(String, usize)> {
                 in_word = true;
             }
             current_word.push(ch);
-        } else {
-            if in_word && !current_word.is_empty() && current_word.len() > 1 {
-                words.push((current_word.clone(), word_start));
-                current_word.clear();
-                in_word = false;
-            } else if in_word {
-                current_word.clear();
-                in_word = false;
-            }
+        } else if in_word && !current_word.is_empty() && current_word.len() > 1 {
+            words.push((current_word.clone(), word_start));
+            current_word.clear();
+            in_word = false;
+        } else if in_word {
+            current_word.clear();
+            in_word = false;
         }
     }
 
@@ -210,10 +206,7 @@ fn main() {
         assert!(!spans.is_empty());
 
         // Should extract from comment
-        let comment_words: Vec<_> = spans
-            .iter()
-            .filter(|s| s.text == "comment")
-            .collect();
+        let comment_words: Vec<_> = spans.iter().filter(|s| s.text == "comment").collect();
         assert!(!comment_words.is_empty());
     }
 

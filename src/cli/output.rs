@@ -86,7 +86,8 @@ fn print_text_errors(file_path: &Path, result: &CheckResult, colored_output: boo
             );
 
             if !error.suggestions.is_empty() {
-                let suggestions = error.suggestions
+                let suggestions = error
+                    .suggestions
                     .iter()
                     .take(5)
                     .map(|s| s.green().to_string())
@@ -98,7 +99,8 @@ fn print_text_errors(file_path: &Path, result: &CheckResult, colored_output: boo
             println!("  {} {} {}", line_info, error.word, &error.context);
 
             if !error.suggestions.is_empty() {
-                let suggestions = error.suggestions
+                let suggestions = error
+                    .suggestions
                     .iter()
                     .take(5)
                     .map(|s| s.to_string())
@@ -181,7 +183,11 @@ pub fn print_fix_summary(total_fixed: usize, files: &[impl AsRef<Path>], colored
             println!("No corrections needed!");
         }
     } else {
-        let fix_word = if total_fixed == 1 { "correction" } else { "corrections" };
+        let fix_word = if total_fixed == 1 {
+            "correction"
+        } else {
+            "corrections"
+        };
         if colored {
             println!(
                 "{} {} {} applied to {} {}",

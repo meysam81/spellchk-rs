@@ -107,11 +107,11 @@ fn edit_distance(a: &str, b: &str) -> usize {
 
     let mut matrix = vec![vec![0; b_len + 1]; a_len + 1];
 
-    for i in 0..=a_len {
-        matrix[i][0] = i;
+    for (i, row) in matrix.iter_mut().enumerate().take(a_len + 1) {
+        row[0] = i;
     }
-    for j in 0..=b_len {
-        matrix[0][j] = j;
+    for (j, item) in matrix[0].iter_mut().enumerate().take(b_len + 1) {
+        *item = j;
     }
 
     let a_chars: Vec<char> = a.chars().collect();
@@ -123,10 +123,10 @@ fn edit_distance(a: &str, b: &str) -> usize {
 
             matrix[i + 1][j + 1] = std::cmp::min(
                 std::cmp::min(
-                    matrix[i][j + 1] + 1,     // deletion
-                    matrix[i + 1][j] + 1,     // insertion
+                    matrix[i][j + 1] + 1, // deletion
+                    matrix[i + 1][j] + 1, // insertion
                 ),
-                matrix[i][j] + cost,          // substitution
+                matrix[i][j] + cost, // substitution
             );
         }
     }
@@ -155,9 +155,17 @@ fn generate_transformations(word: &str) -> Vec<String> {
 
     // Replacements (common typos)
     let common_replacements = [
-        ('a', 'e'), ('e', 'i'), ('i', 'o'), ('o', 'u'),
-        ('b', 'v'), ('c', 'k'), ('f', 'v'), ('g', 'j'),
-        ('m', 'n'), ('s', 'z'), ('t', 'd'),
+        ('a', 'e'),
+        ('e', 'i'),
+        ('i', 'o'),
+        ('o', 'u'),
+        ('b', 'v'),
+        ('c', 'k'),
+        ('f', 'v'),
+        ('g', 'j'),
+        ('m', 'n'),
+        ('s', 'z'),
+        ('t', 'd'),
     ];
 
     for (i, &ch) in chars.iter().enumerate() {
