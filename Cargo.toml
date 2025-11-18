@@ -1,0 +1,75 @@
+[package]
+name = "spellchk"
+version = "0.1.0"
+edition = "2021"
+authors = ["SpellChk Contributors"]
+description = "A blazingly fast spellchecker CLI for any text file"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/meysam81/spellchk-rs"
+readme = "README.md"
+keywords = ["spellcheck", "cli", "spell", "checker", "lint"]
+categories = ["command-line-utilities", "text-processing"]
+
+[dependencies]
+# CLI & output
+clap = { version = "4.5", features = ["derive", "cargo", "env", "wrap_help"] }
+clap_complete = "4.5"
+colored = "2.1"
+indicatif = "0.17"
+console = "0.15"
+dialoguer = "0.11"
+
+# Performance & data structures
+fst = "0.4"
+aho-corasick = "1.1"
+rayon = "1.10"
+memmap2 = "0.9"
+dashmap = "5.5"
+
+# File parsing & text processing
+pulldown-cmark = "0.11"
+regex = "1.10"
+lazy_static = "1.4"
+unicode-segmentation = "1.11"
+
+# Networking & I/O
+reqwest = { version = "0.12", features = ["blocking", "rustls-tls"], default-features = false }
+tokio = { version = "1.38", features = ["rt", "macros"] }
+
+# Serialization & config
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Compression & hashing
+flate2 = "1.0"
+sha2 = "0.10"
+
+# Utilities
+directories = "5.0"
+walkdir = "2.5"
+ignore = "0.4"
+
+[dev-dependencies]
+criterion = "0.5"
+tempfile = "3.10"
+assert_cmd = "2.0"
+predicates = "3.1"
+
+[[bin]]
+name = "spellchk"
+path = "src/main.rs"
+
+[lib]
+name = "spellchk"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
