@@ -1,8 +1,8 @@
 use anyhow::Result;
 use clap::{CommandFactory, Parser};
 use clap_complete::{generate, Shell};
-use spellchk::{checker, cli, dict, Config};
 use spellchk::cli::output::OutputFormat;
+use spellchk::{checker, cli, dict, Config};
 use std::io;
 use std::path::PathBuf;
 

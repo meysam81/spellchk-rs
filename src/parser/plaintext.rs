@@ -1,5 +1,5 @@
-use crate::parser::TextSpan;
 use crate::checker::tokenizer::split_compound_word;
+use crate::parser::TextSpan;
 use anyhow::Result;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -47,17 +47,15 @@ fn extract_words(text: &str) -> Vec<(String, usize)> {
                 word_start = current_pos;
             }
             current_word.push_str(grapheme);
-        } else {
-            if !current_word.is_empty() {
-                // Split camelCase and snake_case
-                let split_words = split_compound_word(&current_word);
-                for split_word in split_words {
-                    if split_word.len() > 1 {
-                        words.push((split_word, word_start));
-                    }
+        } else if !current_word.is_empty() {
+            // Split camelCase and snake_case
+            let split_words = split_compound_word(&current_word);
+            for split_word in split_words {
+                if split_word.len() > 1 {
+                    words.push((split_word, word_start));
                 }
-                current_word.clear();
             }
+            current_word.clear();
         }
 
         current_pos += grapheme.len();

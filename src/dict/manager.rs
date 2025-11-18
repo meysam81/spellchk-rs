@@ -6,7 +6,8 @@ use std::path::PathBuf;
 
 // Use a specific commit hash for reproducibility and stability
 // This prevents unexpected changes from the 'master' branch
-const WORDLIST_BASE_URL: &str = "https://raw.githubusercontent.com/dwyl/english-words/6e4bc58ad764c3e6df8b5be4048671962c9d6a23";
+const WORDLIST_BASE_URL: &str =
+    "https://raw.githubusercontent.com/dwyl/english-words/6e4bc58ad764c3e6df8b5be4048671962c9d6a23";
 const WORDLIST_VERSION: &str = "2023.12";
 
 pub struct DictionaryInfo {
@@ -17,12 +18,14 @@ pub struct DictionaryInfo {
 }
 
 pub fn list_dictionaries() -> Result<()> {
-    let data_dir = crate::config::Config::data_dir()
-        .context("Failed to get data directory")?;
+    let data_dir = crate::config::Config::data_dir().context("Failed to get data directory")?;
 
     if !data_dir.exists() {
         println!("{}", "No dictionaries installed.".yellow());
-        println!("Run {} to download a dictionary.", "spellchk dict download en_US".cyan());
+        println!(
+            "Run {} to download a dictionary.",
+            "spellchk dict download en_US".cyan()
+        );
         return Ok(());
     }
 
@@ -38,14 +41,20 @@ pub fn list_dictionaries() -> Result<()> {
 
         if path.extension().and_then(|s| s.to_str()) == Some("dict") {
             found_any = true;
-            let language = path.file_stem()
+            let language = path
+                .file_stem()
                 .and_then(|s| s.to_str())
                 .unwrap_or("unknown");
 
             let metadata = fs::metadata(&path)?;
             let size_kb = metadata.len() / 1024;
 
-            println!("  {} {} ({})", "✓".green(), language.cyan().bold(), format!("{}KB", size_kb).dimmed());
+            println!(
+                "  {} {} ({})",
+                "✓".green(),
+                language.cyan().bold(),
+                format!("{}KB", size_kb).dimmed()
+            );
         }
     }
 
@@ -54,23 +63,25 @@ pub fn list_dictionaries() -> Result<()> {
     }
 
     println!();
-    println!("Data directory: {}", data_dir.display().to_string().dimmed());
+    println!(
+        "Data directory: {}",
+        data_dir.display().to_string().dimmed()
+    );
 
     Ok(())
 }
 
 pub fn download_dictionary(language: &str) -> Result<()> {
-    println!("{} dictionary for {} (version: {})...",
+    println!(
+        "{} dictionary for {} (version: {})...",
         "Downloading".cyan().bold(),
         language.yellow(),
         WORDLIST_VERSION.dimmed()
     );
 
-    let data_dir = crate::config::Config::data_dir()
-        .context("Failed to get data directory")?;
+    let data_dir = crate::config::Config::data_dir().context("Failed to get data directory")?;
 
-    fs::create_dir_all(&data_dir)
-        .context("Failed to create data directory")?;
+    fs::create_dir_all(&data_dir).context("Failed to create data directory")?;
 
     // Download from pinned commit hash for reproducibility
     // Using specific commit instead of 'master' prevents unexpected changes
@@ -93,12 +104,12 @@ pub fn download_dictionary(language: &str) -> Result<()> {
     pb.set_style(
         ProgressStyle::default_spinner()
             .template("{spinner:.cyan} {msg}")
-            .unwrap()
+            .unwrap(),
     );
     pb.set_message("Downloading...");
 
-    let response = reqwest::blocking::get(&wordlist_url)
-        .context("Failed to download dictionary")?;
+    let response =
+        reqwest::blocking::get(&wordlist_url).context("Failed to download dictionary")?;
 
     if !response.status().is_success() {
         anyhow::bail!("Failed to download dictionary: HTTP {}", response.status());
@@ -121,14 +132,17 @@ pub fn download_dictionary(language: &str) -> Result<()> {
     let dict_path = data_dir.join(format!("{}.dict", language));
     crate::checker::dictionary::Dictionary::build_from_words(&words, &dict_path)?;
 
-    println!("{} Dictionary installed: {}", "✓".green().bold(), dict_path.display().to_string().cyan());
+    println!(
+        "{} Dictionary installed: {}",
+        "✓".green().bold(),
+        dict_path.display().to_string().cyan()
+    );
 
     Ok(())
 }
 
 pub fn update_dictionaries() -> Result<()> {
-    let data_dir = crate::config::Config::data_dir()
-        .context("Failed to get data directory")?;
+    let data_dir = crate::config::Config::data_dir().context("Failed to get data directory")?;
 
     if !data_dir.exists() {
         println!("{}", "No dictionaries installed.".yellow());
@@ -154,7 +168,16 @@ pub fn update_dictionaries() -> Result<()> {
         return Ok(());
     }
 
-    println!("{} {} {}...", "Updating".cyan().bold(), languages.len(), if languages.len() == 1 { "dictionary" } else { "dictionaries" });
+    println!(
+        "{} {} {}...",
+        "Updating".cyan().bold(),
+        languages.len(),
+        if languages.len() == 1 {
+            "dictionary"
+        } else {
+            "dictionaries"
+        }
+    );
     println!();
 
     for language in languages {
@@ -168,14 +191,20 @@ pub fn update_dictionaries() -> Result<()> {
 }
 
 pub fn show_info(language: &str) -> Result<()> {
-    let data_dir = crate::config::Config::data_dir()
-        .context("Failed to get data directory")?;
+    let data_dir = crate::config::Config::data_dir().context("Failed to get data directory")?;
 
     let dict_path = data_dir.join(format!("{}.dict", language));
 
     if !dict_path.exists() {
-        println!("{} Dictionary for {} not found.", "✗".red().bold(), language.yellow());
-        println!("Run {} to download it.", format!("spellchk dict download {}", language).cyan());
+        println!(
+            "{} Dictionary for {} not found.",
+            "✗".red().bold(),
+            language.yellow()
+        );
+        println!(
+            "Run {} to download it.",
+            format!("spellchk dict download {}", language).cyan()
+        );
         return Ok(());
     }
 

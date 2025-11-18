@@ -7,7 +7,7 @@ pub mod parser;
 pub use checker::SpellChecker;
 pub use config::Config;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct CheckResult {
     pub error_count: usize,
     pub fixed_count: usize,
@@ -27,13 +27,4 @@ pub struct SpellError {
 pub struct TextSpan {
     pub start: usize,
     pub end: usize,
-}
-impl Default for CheckResult {
-    fn default() -> Self {
-        Self {
-            error_count: 0,
-            fixed_count: 0,
-            errors: Vec::new(),
-        }
-    }
 }

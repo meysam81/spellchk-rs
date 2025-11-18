@@ -58,8 +58,8 @@ pub struct TextSpan {
     pub text: String,
     pub line: usize,
     pub column: usize,
-    pub start: usize, // Byte offset where the span starts
-    pub end: usize,   // Byte offset where the span ends
+    pub start: usize,          // Byte offset where the span starts
+    pub end: usize,            // Byte offset where the span ends
     pub original_text: String, // For context
 }
 

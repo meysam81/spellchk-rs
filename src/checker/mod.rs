@@ -86,7 +86,8 @@ impl SpellChecker {
             }
 
             // Word is misspelled - generate suggestions
-            let suggestions = suggestions::generate(&word_lower, &self.dictionary, config.max_suggestions);
+            let suggestions =
+                suggestions::generate(&word_lower, &self.dictionary, config.max_suggestions);
 
             errors.push(SpellError {
                 word: span.text.clone(),
@@ -200,7 +201,8 @@ impl SpellChecker {
             }
 
             // Get suggestions
-            let suggestions = suggestions::generate(&word_lower, &self.dictionary, config.max_suggestions);
+            let suggestions =
+                suggestions::generate(&word_lower, &self.dictionary, config.max_suggestions);
 
             // Prompt user
             if let Some(choice) = print_interactive_prompt(
